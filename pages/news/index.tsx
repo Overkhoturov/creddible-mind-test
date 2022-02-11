@@ -8,6 +8,8 @@ import Card from '../../components/Card'
 import contentFullClient from '../../lib/contentfulService'
 import algoliaClient from '../../lib/algoliaService'
 
+const index = algoliaClient.initIndex('news')
+
 interface Fields {
   logo: {
     sys: {
@@ -28,8 +30,6 @@ const News = () => {
   const [logoUrl, setLogoUrl] = useState<string>('')
   const [news, setNews] = useState([])
   const [searchValue, setSearchValue] = useState<string>('')
-  const index = algoliaClient.initIndex('news')
-  const firstThreeNews = [...news]
 
   useEffect(() => {
     contentFullClient.getEntries({ content_type: 'newsConfig' })

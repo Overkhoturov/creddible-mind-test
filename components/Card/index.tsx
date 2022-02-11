@@ -13,12 +13,13 @@ interface CardProps {
   organization: string,
   date: string,
   id: string,
-  isShort?: boolean
+  isShort?: boolean,
+  disableLink?: boolean
 }
 
 const formatDate = (str:string) => moment(str, 'YYYY-MM-DD').format("MMM DD, YYYY")
 
-const Card = ({image, title, name, description, organization, date, id, isShort}: CardProps) => {
+const Card = ({image, title, name, description, organization, date, id, isShort, disableLink}: CardProps) => {
   return (
     <MCard sx={{
       display: 'flex',
@@ -27,7 +28,7 @@ const Card = ({image, title, name, description, organization, date, id, isShort}
       borderRadius: 0,
       flexDirection: isShort ? 'column' : 'row'
     }}>
-      <Link href={`news/${id}`} passHref>
+      <Link href={ disableLink ? '#' :`news/${id}`} passHref>
         <CardMedia
           component="img"
           image={image}
