@@ -41,11 +41,15 @@ const Header = ({logoUrl, profileName, menuLabel}: HeaderProps) => {
               bgcolor: 'gray'
             }} />
             <Button 
-              endIcon={<ArrowDropDownIcon />}
+              endIcon={<ArrowDropDownIcon sx={{color: 'orange'}} />}
               aria-controls={open ? 'basic-menu' : undefined}
               aria-haspopup="true"
               aria-expanded={open ? 'true' : undefined}
               onClick={handleClick}
+              sx={{
+                textTransform: 'capitalize',
+                fontWeight: 'bold'
+              }}
             >
               <span>{profileName}</span>
             </Button>
