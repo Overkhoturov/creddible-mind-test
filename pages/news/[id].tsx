@@ -13,16 +13,10 @@ const Post = ({}) => {
   const { id } = router.query
 
   useEffect(() => {
-    index.search('')
-    .then(({hits}) => {
-      hits.some((hit) => {
-        if (hit.objectID === id) {
-          setNewItem(hit)
-          return true
-        }
-        return false
-      })
+    index.search('', {
+      filters: `objectID:"${id}"`
     })
+    .then(({hits}) => setNewItem(hits[0]))
     .catch((err) => console.log(err));
   }, [id])
 
