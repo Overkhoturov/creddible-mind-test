@@ -31,6 +31,12 @@ const News = () => {
   const [news, setNews] = useState([])
   const [searchValue, setSearchValue] = useState<string>('')
 
+  const getDefaultNews = () => {
+    index.search('')
+      .then(({hits}) => setNews(hits))
+      .catch((err) => console.log(err));
+  }
+
   useEffect(() => {
     contentFullClient.getEntries({ content_type: 'newsConfig' })
       .then((result) => {
@@ -40,11 +46,10 @@ const News = () => {
         setMenuLabel(fields.menuLabel);
         setLogoId(fields.logo.sys.id);
       })
-      .catch((err) => console.log(err));      
-    index.search('')
-      .then(({hits}) => setNews(hits))
       .catch((err) => console.log(err));
+      getDefaultNews()
   }, [])
+
 
   useEffect(() => {
     contentFullClient.getAsset(logoId)
@@ -54,6 +59,17 @@ const News = () => {
       .catch((err) => console.log(err));
   }, [logoId])
 
+  const searchNews = () => {
+    if(!searchValue) {
+      getDefaultNews()
+      return;
+    }
+    index.search('', {
+      filters: `topics.title:"${searchValue}"`
+    })
+    .then(({hits}) => setNews(hits))
+    .catch((err) => console.log(err));
+  }
 
   return (
     <>
@@ -130,7 +146,9 @@ const News = () => {
                 '&:hover': {
                   bgcolor: '#1976d2',
                 }
-              }}>
+              }}
+                onClick={searchNews}
+              >
                 <SearchIcon />
               </Button>
             </Box>
