@@ -7,7 +7,7 @@ import algoliaClient from '../../lib/algoliaService'
 
 const index = algoliaClient.initIndex('news')
 
-const Post = ({}) => {
+const Post = () => {
   const router = useRouter()
   const [newItem, setNewItem] = useState(null)
   const { id } = router.query

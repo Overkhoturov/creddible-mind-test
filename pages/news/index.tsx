@@ -31,44 +31,60 @@ const News = () => {
   const [news, setNews] = useState([])
   const [searchValue, setSearchValue] = useState<string>('')
 
-  const getDefaultNews = () => {
-    index.search('')
-      .then(({hits}) => setNews(hits))
-      .catch((err) => console.log(err));
+  const getDefaultNews = async () => {
+    try {
+      const {hits} = await index.search('')
+      setNews(hits);
+    } catch(err) {
+      console.log(err)
+    }
+  }
+
+  const getEntries = async () => {
+    try {
+      const entries = await contentFullClient.getEntries({ content_type: 'newsConfig' });
+      const [item] = entries.items
+      const {fields} = item as Entry<Fields>;
+      const {searchLabel, menuLabel, logo} = fields
+      setSearchLabel(searchLabel);
+      setMenuLabel(menuLabel);
+      setLogoId(logo.sys.id);
+    } catch (err) {
+      console.log(err)
+    }
+    await getDefaultNews()
   }
 
   useEffect(() => {
-    contentFullClient.getEntries({ content_type: 'newsConfig' })
-      .then((result) => {
-        const [item] = result.items
-        const {fields} = item as Entry<Fields>;
-        setSearchLabel(fields.searchLabel);
-        setMenuLabel(fields.menuLabel);
-        setLogoId(fields.logo.sys.id);
-      })
-      .catch((err) => console.log(err));
-      getDefaultNews()
+    getEntries();
   }, [])
 
+  const getAsset = async () => {
+    try {
+      const asset = await contentFullClient.getAsset(logoId);
+      setLogoUrl(`https:${asset.fields.file.url}`)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   useEffect(() => {
-    contentFullClient.getAsset(logoId)
-      .then((result) => {
-        setLogoUrl(`https:${result.fields.file.url}`)
-      })
-      .catch((err) => console.log(err));
+    getAsset()
   }, [logoId])
 
-  const searchNews = () => {
+  const searchNews = async () => {
     if(!searchValue) {
-      getDefaultNews()
+      await getDefaultNews()
       return;
     }
-    index.search('', {
-      filters: `topics.title:"${searchValue}"`
-    })
-    .then(({hits}) => setNews(hits))
-    .catch((err) => console.log(err));
+    try {
+      const {hits} = await index.search('', {
+        filters: `topics.title:"${searchValue}"`
+      })
+      setNews(hits)
+    } catch(err) {
+      console.log(err)
+    }
   }
 
   return (
